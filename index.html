@@ -1,0 +1,905 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Спектра — Эстейт Лига</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: повторяет панель еСкан (Filament 4) — прозрачное меню на сером фоне с белой шапкой логотипа, белый топбар, страницы из секций, статистик, вкладок и таблиц; slate-палитра, синий primary, Inter */
+:root{
+  --g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;--g300:#cad5e2;--g400:#90a1b9;--g500:#62748e;--g600:#45556c;--g700:#314158;--g800:#1d293d;--g900:#0f172b;--g950:#020618;
+  --p50:#eff6ff;--p400:#51a2ff;--p500:#2b7fff;--p600:#155dfc;--p700:#1447e6;
+  --bg:var(--g50);--card:#fff;--inp:#fff;--ring:rgba(2,6,24,.05);--ring2:rgba(2,6,24,.1);
+  --tx:var(--g950);--tx2:var(--g700);--mu:var(--g500);--fa:var(--g400);--dv:var(--g200);--hv:var(--g50);--ac:var(--g100);--track:var(--g100);
+  --pt:var(--p700);--pl:var(--p600);--pb:var(--p600);--pbh:var(--p500);--avbg:var(--g950);--tgoff:var(--g200);
+  --sh:0 0 0 1px var(--ring),0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);
+  --shs:0 1px 2px 0 rgba(0,0,0,.05);
+  --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:var(--g950);--card:var(--g900);--inp:rgba(255,255,255,.05);--ring:rgba(255,255,255,.1);--ring2:rgba(255,255,255,.2);
+  --tx:#fff;--tx2:var(--g200);--mu:var(--g400);--fa:var(--g500);--dv:rgba(255,255,255,.1);--hv:rgba(255,255,255,.05);--ac:rgba(255,255,255,.05);--track:rgba(255,255,255,.08);
+  --pt:var(--p400);--pl:var(--p400);--pb:var(--p500);--pbh:var(--p400);--avbg:var(--g700);--tgoff:var(--g700);
+  --sh:0 0 0 1px var(--ring);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:var(--g950);--card:var(--g900);--inp:rgba(255,255,255,.05);--ring:rgba(255,255,255,.1);--ring2:rgba(255,255,255,.2);
+  --tx:#fff;--tx2:var(--g200);--mu:var(--g400);--fa:var(--g500);--dv:rgba(255,255,255,.1);--hv:rgba(255,255,255,.05);--ac:rgba(255,255,255,.05);--track:rgba(255,255,255,.08);
+  --pt:var(--p400);--pl:var(--p400);--pb:var(--p500);--pbh:var(--p400);--avbg:var(--g700);--tgoff:var(--g700);
+  --sh:0 0 0 1px var(--ring);color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:400 14px/20px var(--font);-webkit-font-smoothing:antialiased;min-height:100dvh}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--pb);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.lg{width:24px;height:24px}.ic.sm{width:16px;height:16px}
+.muted{color:var(--mu)}
+
+/* colour sets (Filament: success = emerald, warning = orange, danger = red, primary/info = blue, gray = slate) */
+.bdg,.tc,.spark,.bar-i,.ico{--c50:var(--g50);--c400:var(--g400);--c600:var(--g600)}
+.c-primary{--c50:#eff6ff;--c400:#51a2ff;--c600:#155dfc}
+.c-success{--c50:#ecfdf5;--c400:#00d492;--c600:#009966}
+.c-warning{--c50:#fff7ed;--c400:#ff8904;--c600:#f54900}
+.c-danger{--c50:#fef2f2;--c400:#ff6467;--c600:#e7000b}
+.c-gray{--c50:#f8fafc;--c400:#90a1b9;--c600:#45556c}
+.bdg{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:24px;padding:4px 8px;border-radius:6px;font-size:12px;line-height:16px;font-weight:500;white-space:nowrap;background:var(--c50);color:var(--c600);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--c600) 10%,transparent)}
+.bdg.sm{padding:2px 6px;min-width:20px}
+.tc{color:var(--c600)}
+.ico{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--c50);color:var(--c600);flex:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bdg{background:color-mix(in oklab,var(--c400) 10%,transparent);color:var(--c400);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--c400) 30%,transparent)}:root:not([data-theme="light"]) .tc{color:var(--c400)}:root:not([data-theme="light"]) .ico{background:color-mix(in oklab,var(--c400) 12%,transparent);color:var(--c400)}}
+:root[data-theme="dark"] .bdg{background:color-mix(in oklab,var(--c400) 10%,transparent);color:var(--c400);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--c400) 30%,transparent)}
+:root[data-theme="dark"] .tc{color:var(--c400)}
+:root[data-theme="dark"] .ico{background:color-mix(in oklab,var(--c400) 12%,transparent);color:var(--c400)}
+
+/* layout */
+.lay{display:flex;min-height:100dvh}
+.sb{width:20rem;flex:none;position:sticky;top:0;height:100dvh;display:flex;flex-direction:column;z-index:20}
+.sb-h{height:64px;flex:none;display:flex;align-items:center;padding:0 24px 0 max(24px,env(safe-area-inset-left,0px));background:var(--card);box-shadow:0 0 0 1px var(--ring)}
+.logo{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px 0 8px;border-radius:8px;background:linear-gradient(90deg,#111827,#1f2937);color:#f8fafc;font-weight:600;font-size:15px;text-decoration:none;letter-spacing:.01em}
+.logo i{width:18px;height:18px;border-radius:50%;background:conic-gradient(#ef4444,#f59e0b,#22c55e,#22d3ee,#3b82f6,#a855f7,#ef4444);box-shadow:inset 0 0 0 4px #1a2130}
+.sb-n{flex:1;overflow-y:auto;padding:32px 24px 32px max(24px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:28px;scrollbar-width:thin;scrollbar-color:var(--g300) transparent}
+.tenant{display:flex;align-items:center;gap:12px;width:calc(100% + 16px);margin:0 -8px;padding:8px;border:0;border-radius:8px;background:none;cursor:pointer;text-align:left}
+.tenant:hover{background:var(--hv)}
+.tenant .tav{width:36px;height:36px;border-radius:8px;background:var(--p600);color:#fff;display:grid;place-items:center;font-weight:600;font-size:13px;flex:none}
+.tenant b{display:block;font-weight:500;font-size:14px}
+.tenant small{display:block;color:var(--mu);font-size:12px;line-height:16px}
+.tenant .ic{margin-left:auto;color:var(--fa)}
+.grp{display:flex;flex-direction:column;gap:4px;margin:0 -8px}
+.grp-l{display:flex;align-items:center;gap:12px;width:100%;padding:8px;border:0;background:none;border-radius:8px;cursor:pointer;font-weight:500;font-size:14px;line-height:24px;color:var(--mu);text-align:left}
+.grp-l .ic{margin-left:auto;color:var(--fa);transition:transform .15s}
+.grp.closed .grp-l .ic{transform:rotate(-180deg)}
+.grp.closed ul{display:none}
+.grp ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.it{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px;color:var(--tx2);text-decoration:none;font-weight:500;font-size:14px;line-height:20px}
+.it .ic{width:24px;height:24px;color:var(--fa)}
+.it:hover{background:var(--hv)}
+.it.on{background:var(--ac);color:var(--pt)}
+.it.on .ic{color:var(--pt)}
+.it .bdg{margin-left:auto}
+.sb-ft{font-size:12px;line-height:16px;color:var(--fa);margin-top:auto}
+
+.mn{flex:1;min-width:0;display:flex;flex-direction:column}
+.tb{position:sticky;top:0;z-index:15;min-height:64px;background:var(--card);box-shadow:0 0 0 1px var(--ring),var(--shs);display:flex;align-items:center;gap:16px;padding:env(safe-area-inset-top,0px) max(24px,env(safe-area-inset-right,0px)) 0 24px}
+.ib{position:relative;display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:8px;background:none;color:var(--fa);cursor:pointer}
+.ib:hover{background:var(--hv);color:var(--mu)}
+.ib .bdg{position:absolute;top:-2px;left:22px}
+.burger{display:none}
+.tb-r{margin-left:auto;display:flex;align-items:center;gap:16px}
+.gs{position:relative;display:block;width:16rem}
+.gs .ic{position:absolute;left:10px;top:8px;color:var(--fa)}
+.gs input{padding-left:36px}
+.av{width:32px;height:32px;border-radius:50%;background:var(--avbg);color:#fff;display:grid;place-items:center;font-weight:600;font-size:12px;flex:none;border:0}
+button.av{cursor:pointer}
+.um{position:relative}
+.dd{position:absolute;right:0;top:44px;width:15rem;background:var(--card);border-radius:8px;box-shadow:0 0 0 1px var(--ring),0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);z-index:30;overflow:hidden}
+.dd>div{padding:4px}
+.dd>div+div{border-top:1px solid var(--dv)}
+.dd-u{display:flex;gap:12px;align-items:center;padding:8px}
+.dd-u b{display:block;font-weight:500}
+.dd-u small{display:block;color:var(--mu);font-size:12px;line-height:16px}
+.dd-th{display:flex;gap:4px;padding:4px}
+.dd-th button{flex:1;display:grid;place-items:center;border:0;background:none;border-radius:8px;padding:8px;color:var(--fa);cursor:pointer}
+.dd-th button:hover{background:var(--hv)}
+.dd-th button.on{background:var(--hv);color:var(--pl)}
+.dd-i{display:flex;align-items:center;gap:8px;width:100%;border:0;background:none;border-radius:6px;padding:8px;cursor:pointer;color:var(--tx2);font-size:14px;text-align:left}
+.dd-i:hover{background:var(--hv)}
+.dd-i .ic{color:var(--fa)}
+
+.pg{width:100%;max-width:80rem;margin:0 auto;padding:32px max(32px,env(safe-area-inset-right,0px)) 48px 32px}
+.ph{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:32px}
+.bc{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px;font-size:14px;font-weight:500;color:var(--mu)}
+.bc .ic{color:var(--fa)}
+.bc a{text-decoration:none}.bc a:hover{color:var(--tx2)}
+.ph h1{margin:0;font-size:30px;line-height:36px;font-weight:700;letter-spacing:-.025em}
+.ph p{margin:8px 0 0;font-size:16px;line-height:24px;color:var(--mu);max-width:44rem}
+.ph-a{display:flex;flex-wrap:wrap;gap:12px}
+.pb{display:flex;flex-direction:column;gap:24px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:start}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.g6{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}
+.span2{grid-column:span 2}
+.col{display:flex;flex-direction:column;gap:24px;min-width:0}
+
+/* section */
+.sec{background:var(--card);border-radius:12px;box-shadow:var(--sh);min-width:0}
+.sec-h{display:flex;align-items:center;gap:12px;padding:16px 24px}
+.sec-h h3{margin:0;font-size:16px;line-height:24px;font-weight:600}
+.sec-h p{margin:0;font-size:14px;color:var(--mu)}
+.sec-h .acts{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+.sec-c{border-top:1px solid var(--dv);padding:24px}
+.sec-c.flush{padding:0}
+.note{margin:16px 0 0;font-size:14px;color:var(--mu)}
+
+/* stats */
+.stat{position:relative;background:var(--card);border-radius:12px;box-shadow:var(--sh);padding:24px;overflow:hidden;min-width:0}
+.st-l{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:var(--mu)}
+.st-v{margin-top:8px;font-size:30px;line-height:36px;font-weight:600;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.st-d{display:flex;align-items:center;gap:4px;margin-top:8px;font-size:14px}
+.stat.cmp{padding:16px 20px}
+.stat.cmp .st-v{font-size:24px;line-height:32px;margin-top:4px}
+.stat.cmp .st-d{margin-top:4px;color:var(--mu)}
+.spark{position:absolute;left:0;right:0;bottom:0;width:100%;height:24px;color:var(--c600)}
+.spark .sa{fill:currentColor;opacity:.1}.spark .sl{fill:none;stroke:currentColor;stroke-width:2;vector-effect:non-scaling-stroke}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:8px;padding:8px 12px;font-weight:600;font-size:14px;line-height:20px;cursor:pointer;white-space:nowrap;text-decoration:none;transition:background .12s}
+.btn.sm{padding:6px 10px;gap:4px}
+.btn.primary{background:var(--pb);color:#fff;box-shadow:var(--shs)}
+.btn.primary:hover{background:var(--pbh)}
+.btn.gray{background:var(--inp);color:var(--tx);box-shadow:var(--shs),inset 0 0 0 1px var(--ring2)}
+.btn.gray:hover{background:var(--hv)}
+.btn.gray .ic{color:var(--fa)}
+.btn.danger{background:#e7000b;color:#fff}
+.btn.danger:hover{background:#fb2c36}
+.btn:disabled{opacity:.7;cursor:not-allowed}
+.lnk{display:inline-flex;align-items:center;gap:6px;border:0;background:none;padding:0;font-weight:600;font-size:14px;line-height:20px;color:var(--pl);cursor:pointer;text-decoration:none;white-space:nowrap}
+.lnk:hover{text-decoration:underline}
+.lnk .ic{width:16px;height:16px}
+.lnk.gray{color:var(--tx2)}
+.lnk.danger{color:#e7000b}
+
+/* forms */
+.fg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.fl{display:flex;flex-direction:column;gap:8px;min-width:0}
+.fl>label,.fl>.lb{font-size:14px;font-weight:500;line-height:20px}
+.fl .hint{font-size:14px;color:var(--mu)}
+.req::after{content:"*";color:#e7000b;margin-left:2px}
+.inp{display:block;width:100%;border:0;border-radius:8px;background:var(--inp);color:var(--tx);padding:6px 12px;font-size:14px;line-height:24px;box-shadow:var(--shs),inset 0 0 0 1px var(--ring2);outline:none}
+.inp:focus{box-shadow:inset 0 0 0 2px var(--pb)}
+.inp::placeholder{color:var(--fa)}
+select.inp{appearance:none;padding-right:36px;cursor:pointer;background-image:linear-gradient(45deg,transparent 50%,var(--fa) 50%),linear-gradient(135deg,var(--fa) 50%,transparent 50%);background-position:calc(100% - 17px) 55%,calc(100% - 12px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+textarea.inp{min-height:104px;resize:vertical}
+.tg{position:relative;display:inline-block;width:44px;height:24px;flex:none;border:0;border-radius:999px;padding:0;background:var(--tgoff);cursor:pointer;transition:background .2s}
+.tg::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);transition:transform .2s}
+.tg[aria-checked="true"]{background:var(--pb)}
+.tg[aria-checked="true"]::after{transform:translateX(20px)}
+.tgr{display:flex;align-items:flex-start;gap:12px}
+.tgr b{display:block;font-weight:500}
+.tgr span{display:block;color:var(--mu)}
+.tgr .tg{margin-top:-2px}
+.cb{appearance:none;width:16px;height:16px;border-radius:4px;margin:2px 0 0;flex:none;cursor:pointer;background:var(--inp);box-shadow:var(--shs),inset 0 0 0 1px var(--ring2)}
+.cb:checked{background:var(--pb) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M12.207 4.793a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L6.5 9.086l4.293-4.293a1 1 0 0 1 1.414 0z'/%3E%3C/svg%3E") center/100% no-repeat;box-shadow:none}
+.stack{display:flex;flex-direction:column;gap:20px}
+.fa{display:flex;gap:12px;flex-wrap:wrap}
+.tok{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pv{background:var(--hv);border-radius:8px;box-shadow:inset 0 0 0 1px var(--dv);padding:12px 14px;color:var(--tx2)}
+.pv small{display:block;color:var(--mu);font-size:12px;margin-bottom:4px;font-weight:500}
+.call{display:flex;gap:12px;padding:12px 16px;border-radius:8px;background:var(--c50);color:var(--tx2);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--c600) 15%,transparent)}
+.call .ic{color:var(--c600);margin-top:0}
+:root[data-theme="dark"] .call{background:color-mix(in oklab,var(--c400) 10%,transparent)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .call{background:color-mix(in oklab,var(--c400) 10%,transparent)}}
+
+/* tabs */
+.tabs-w{display:flex;justify-content:center}
+.tabs{display:inline-flex;gap:4px;max-width:100%;overflow-x:auto;background:var(--card);border-radius:12px;padding:8px;box-shadow:var(--sh)}
+.tab{display:flex;align-items:center;gap:8px;border:0;background:none;border-radius:8px;padding:8px 12px;font-weight:500;font-size:14px;line-height:20px;color:var(--mu);cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--tx2)}
+.tab.on{background:var(--hv);color:var(--pt)}
+
+/* tables */
+.ta{background:var(--card);border-radius:12px;box-shadow:var(--sh);overflow:hidden;min-width:0}
+.ta-h{display:flex;align-items:center;gap:12px;padding:16px 24px;border-bottom:1px solid var(--dv)}
+.ta-h h3{margin:0;font-size:16px;line-height:24px;font-weight:600}
+.ta-h p{margin:0;color:var(--mu)}
+.ta-h .acts{margin-left:auto;display:flex;gap:12px;align-items:center}
+.ta-tb{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:12px 16px;border-bottom:1px solid var(--dv)}
+.ta-tb .gs{width:min(100%,16rem)}
+.sc{overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:14px;line-height:20px}
+.t thead th{background:var(--hv);text-align:left;font-weight:600;color:var(--tx);padding:14px 12px;white-space:nowrap}
+.t th .ic{width:16px;height:16px;color:var(--fa);vertical-align:-3px;margin-left:4px}
+.t td{padding:16px 12px;border-top:1px solid var(--dv);vertical-align:middle}
+.t thead tr:first-child th{border-top:0}
+.t th:first-child,.t td:first-child{padding-left:24px}
+.t th:last-child,.t td:last-child{padding-right:24px}
+.t tbody tr.click{cursor:pointer}
+.t tbody tr:hover td{background:var(--hv)}
+.t .num{text-align:right;font-variant-numeric:tabular-nums}
+.t .ctr{text-align:center}
+.t .sub{display:block;color:var(--mu)}
+.t .trunc{display:block;max-width:12rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx2)}
+.who{display:flex;align-items:center;gap:12px}
+.who b{font-weight:500}
+.ta-ft{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:12px 16px 12px 24px;border-top:1px solid var(--dv);color:var(--tx2)}
+.pgn{display:inline-flex;border-radius:8px;background:var(--inp);box-shadow:var(--shs),0 0 0 1px var(--ring2);overflow:hidden}
+.pgn button{border:0;background:none;padding:6px 12px;font-weight:600;color:var(--tx2);cursor:pointer;min-width:36px}
+.pgn button+button{border-left:1px solid var(--dv)}
+.pgn button.on{color:var(--pt);background:var(--hv)}
+.pgn button:disabled{color:var(--fa);cursor:default}
+.ft-r{display:flex;align-items:center;gap:12px}
+.ft-r select{width:auto}
+.empty{padding:48px 24px;text-align:center;color:var(--mu)}
+
+/* lists inside sections */
+.ls>*{display:flex;align-items:center;gap:12px;padding:16px 24px}
+.ls>*+*{border-top:1px solid var(--dv)}
+.ls .tx{flex:1;min-width:0}
+.ls .tx b{display:block;font-weight:500}
+.ls .tx span{display:block;color:var(--mu)}
+.dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 24px;margin:0}
+.dl dt{font-size:14px;font-weight:500;color:var(--tx)}
+.dl dd{margin:4px 0 0;color:var(--tx2)}
+.dl.one{grid-template-columns:minmax(0,1fr)}
+
+/* charts */
+.chart{display:block;width:100%;height:auto}
+.chart .gl{stroke:var(--dv)}
+.chart .ax{fill:var(--mu);font-size:11px;font-family:var(--font)}
+.chart .ln{fill:none;stroke:var(--pb);stroke-width:2}
+.chart .ar{fill:var(--pb);opacity:.1}
+.chart circle{fill:var(--card);stroke:var(--pb);stroke-width:2}
+.sn-r{display:grid;grid-template-columns:150px minmax(0,1fr) 52px;gap:16px;align-items:center;padding:10px 0}
+.sn-r b{display:block;font-weight:500}
+.sn-r small{display:block;color:var(--mu);font-size:12px;line-height:16px}
+.bar{height:8px;border-radius:999px;background:var(--track);overflow:hidden}
+.bar-i{display:block;height:100%;border-radius:999px;background:var(--c600)}
+.sn-r .bdg{justify-self:end}
+.th2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.th2 h4{margin:0 0 8px;font-size:14px;font-weight:500;color:var(--mu)}
+.thr{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0}
+.thr+.thr{border-top:1px solid var(--dv)}
+
+/* reviews */
+.rv{padding:20px 24px;display:flex;flex-direction:column;gap:12px}
+.rv+.rv{border-top:1px solid var(--dv)}
+.rv-m{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.rv-m b{font-weight:600}
+.rv-m .muted{font-size:14px}
+.rv p{margin:0;color:var(--tx2);max-width:60rem}
+.stars{color:#f59e0b;letter-spacing:1px;font-size:14px}
+.stars s{text-decoration:none;color:var(--g300)}
+.reply{border-left:3px solid var(--pb);background:var(--hv);border-radius:0 8px 8px 0;padding:12px 16px;color:var(--tx2);max-width:60rem}
+.reply small{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--pl);margin-bottom:6px}
+.reply textarea{min-height:84px;margin-bottom:12px}
+
+/* steps */
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.steps li{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding-bottom:20px;position:relative}
+.steps li:not(:last-child)::before{content:"";position:absolute;left:15px;top:34px;bottom:4px;width:2px;background:var(--dv)}
+.steps .n{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:13px;background:var(--c50);color:var(--c600);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--c600) 15%,transparent)}
+.steps b{display:block;font-weight:500;margin-top:6px}
+.steps span{color:var(--mu)}
+
+/* qr */
+.qr-g{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:32px;align-items:start}
+.qr-pv{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.qr{display:block;width:200px;height:200px;background:#fff;border-radius:12px;padding:10px;box-shadow:0 0 0 1px rgba(2,6,24,.1)}
+.qr-pv code{font-size:12px;color:var(--mu);word-break:break-all}
+.prz{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.prz>div{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:8px;box-shadow:inset 0 0 0 1px var(--dv)}
+.prz b{display:block;font-weight:500}
+.prz span{display:block;color:var(--mu);font-size:13px}
+
+/* slide-over */
+.mo-bg{position:fixed;inset:0;background:rgba(2,6,24,.5);z-index:40;animation:fade .15s}
+.so{position:fixed;top:0;right:0;bottom:0;width:min(28rem,100vw);background:var(--card);box-shadow:0 0 0 1px var(--ring),0 25px 50px -12px rgba(0,0,0,.25);z-index:41;display:flex;flex-direction:column;animation:slide .2s ease-out}
+.so.wide{width:min(34rem,100vw)}
+.so-h{display:flex;gap:12px;align-items:flex-start;padding:24px 24px 16px}
+.so-h h2{margin:0;font-size:18px;line-height:28px;font-weight:600}
+.so-h p{margin:4px 0 0;color:var(--mu)}
+.so-h .ib{margin:-4px -8px 0 auto}
+.so-c{flex:1;overflow-y:auto;padding:8px 24px 24px;display:flex;flex-direction:column;gap:24px}
+.so-f{display:flex;gap:12px;flex-wrap:wrap;padding:16px 24px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--dv)}
+@keyframes slide{from{transform:translateX(100%)}}
+@keyframes fade{from{opacity:0}}
+.big{display:flex;align-items:center;gap:16px}
+.big .bdg{font-size:20px;line-height:28px;padding:6px 12px}
+.quote{margin:0;padding:12px 16px;border-radius:8px;background:var(--hv);box-shadow:inset 0 0 0 1px var(--dv);color:var(--tx2)}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:12px;padding-bottom:16px;position:relative}
+.tl li:not(:last-child)::before{content:"";position:absolute;left:9px;top:22px;bottom:2px;width:2px;background:var(--dv)}
+.tl i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--c50);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--c600) 25%,transparent)}
+.tl i::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--c600)}
+.tl b{display:block;font-weight:500}
+.tl span{color:var(--mu)}
+
+/* phone preview (always light: it's the client's handset) */
+.phone{--card:#fff;--inp:#fff;--tx:#020618;--tx2:#314158;--mu:#62748e;--fa:#90a1b9;--dv:#e2e8f0;--hv:#f8fafc;--ring:rgba(2,6,24,.05);--ring2:rgba(2,6,24,.1);--pb:#155dfc;--pbh:#2b7fff;--pl:#155dfc;--track:#f1f5f9;--sh:0 0 0 1px rgba(2,6,24,.05),0 1px 3px 0 rgba(0,0,0,.1);
+  color-scheme:light;width:300px;max-width:100%;margin:0 auto;border:8px solid #020618;border-radius:40px;overflow:hidden;background:#f8fafc;color:#020618;box-shadow:0 30px 60px -20px rgba(2,6,24,.35)}
+.ph-bar{display:flex;justify-content:space-between;padding:10px 22px 4px;font-size:11px;font-weight:600}
+.ph-scr{height:540px;overflow-y:auto;padding:10px 14px 20px;display:flex;flex-direction:column;gap:12px}
+.ph-card{background:#fff;border-radius:14px;box-shadow:var(--sh);padding:14px}
+.ph-brand{display:flex;align-items:center;gap:8px;font-size:12px;color:#62748e}
+.ph-brand .tav{width:22px;height:22px;border-radius:6px;background:#155dfc;color:#fff;display:grid;place-items:center;font-size:9px;font-weight:700}
+.sms{background:#e9edf3;border-radius:16px 16px 16px 4px;padding:10px 12px;font-size:13px;line-height:18px;max-width:92%}
+.sms a{color:#155dfc;font-weight:600;cursor:pointer;text-decoration:underline}
+.ph-q{font-weight:600;font-size:15px;line-height:21px}
+.nps{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.nps button{border:0;border-radius:8px;padding:8px 0;font-weight:600;cursor:pointer;background:#fff;box-shadow:inset 0 0 0 1px rgba(2,6,24,.12)}
+.nps button.on{background:#155dfc;color:#fff;box-shadow:none}
+.nps-l{display:flex;justify-content:space-between;font-size:11px;color:#62748e}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:0;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;box-shadow:inset 0 0 0 1px rgba(2,6,24,.12)}
+.chip.on{background:#eff6ff;color:#1447e6;box-shadow:inset 0 0 0 1px #155dfc}
+.pf{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;border:0;background:#fff;border-radius:10px;padding:12px;font-weight:600;cursor:pointer;box-shadow:var(--sh);text-align:left}
+.pf small{font-weight:400;color:#62748e}
+.mat{display:flex;gap:10px;align-items:center;font-size:13px;padding:4px 0}
+.mat .ico{width:28px;height:28px}
+.mat .ico .ic{width:16px;height:16px}
+.ph-done{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.ph-done .ico{width:48px;height:48px}
+
+/* notifications */
+.nt-w{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));z-index:60;display:flex;flex-direction:column;gap:12px;width:min(24rem,calc(100vw - 32px));pointer-events:none}
+.nt{pointer-events:auto;display:flex;gap:12px;padding:16px;background:var(--card);border-radius:12px;box-shadow:0 0 0 1px var(--ring),0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);animation:ntin .2s ease-out}
+.nt>div{flex:1;min-width:0}
+.nt b{display:block;font-weight:500}
+.nt span{display:block;color:var(--mu);margin-top:2px}
+.nt .x{border:0;background:none;color:var(--fa);cursor:pointer;padding:0;height:20px}
+@keyframes ntin{from{opacity:0;transform:translateY(-6px)}}
+
+/* responsive */
+@media (max-width:1279px){
+  .sb{width:16rem}
+  .g3{grid-template-columns:minmax(0,1fr)}.span2{grid-column:auto}
+  .g6{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .gs{width:12rem}
+}
+@media (max-width:1023px){
+  .sb{position:fixed;left:0;top:0;bottom:0;width:20rem;max-width:85vw;background:var(--card);transform:translateX(-100%);transition:transform .2s;box-shadow:0 0 0 1px var(--ring)}
+  .sb-open .sb{transform:none}
+  .sb-ov{display:none}
+  .sb-open .sb-ov{display:block;position:fixed;inset:0;background:rgba(2,6,24,.5);z-index:19}
+  .burger{display:grid}
+  .g2{grid-template-columns:minmax(0,1fr)}
+  .g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:767px){
+  .tb{padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));gap:8px}
+  .tb-r{gap:8px}
+  .tb .gs{display:none}
+  .pg{padding:24px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+  .ph h1{font-size:24px;line-height:32px}
+  .fg,.th2,.prz,.dl{grid-template-columns:minmax(0,1fr)}
+  .qr-g{grid-template-columns:minmax(0,1fr)}
+  .sec-h,.ta-h{flex-wrap:wrap}
+  .sec-h .acts,.ta-h .acts{margin-left:0}
+  .sn-r{grid-template-columns:110px minmax(0,1fr) 48px;gap:10px}
+  .g6{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ls>*,.rv{padding-left:16px;padding-right:16px}
+}
+@media (max-width:479px){.g4{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+<div id="app"></div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ini=n=>n.split(' ').map(x=>x[0]).join('').slice(0,2);
+const fmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+const I={
+ home:'m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25',
+ chat:'M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155',
+ warn:'M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z',
+ plane:'M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5',
+ qr:'M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5ZM6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z',
+ gift:'M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z',
+ star:'M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z',
+ bolt:'m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z',
+ pin:'M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z',
+ users:'M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z',
+ search:'m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z',
+ bell:'M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0',
+ right:'m8.25 4.5 7.5 7.5-7.5 7.5',
+ up:'m4.5 15.75 7.5-7.5 7.5 7.5',
+ updown:'M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9',
+ funnel:'M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z',
+ eye:'M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z',
+ trup:'M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941',
+ sparkles:'M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z',
+ x:'M6 18 18 6M6 6l12 12',
+ plus:'M12 4.5v15m7.5-7.5h-15',
+ bars:'M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5',
+ check:'M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
+ xc:'m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
+ excl:'M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z',
+ info:'m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z',
+ download:'M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3',
+ doc:'M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z',
+ link:'M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244',
+ clock:'M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
+ copy:'M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75',
+ sun:'M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z',
+ moon:'M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z',
+ pc:'M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25',
+ logout:'M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9',
+ cog:'M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
+};
+const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true"><path d="${I[n]}"/></svg>`;
+const bdg=(t,c='gray',i,sm)=>`<span class="bdg c-${c}${sm?' sm':''}">${i?ic(i,'sm'):''}${t}</span>`;
+const btn=(t,{c='gray',i,a='',sm}={})=>`<button type="button" class="btn ${c}${sm?' sm':''}" ${a}>${i?ic(i):''}${t}</button>`;
+const tg=(on,a,label)=>`<button type="button" class="tg" role="switch" aria-checked="${!!on}" aria-label="${esc(label||'Переключатель')}" ${a}></button>`;
+const sec=(h,d,body,{acts='',flush=false,id=''}={})=>`<section class="sec"${id?` id="${id}"`:''}><header class="sec-h"><div><h3>${h}</h3>${d?`<p>${d}</p>`:''}</div>${acts?`<div class="acts">${acts}</div>`:''}</header><div class="sec-c${flush?' flush':''}">${body}</div></section>`;
+const scColor=s=>s>=9?'success':s>=7?'warning':'danger';
+const stars=n=>`<span class="stars" aria-label="${n} из 5">${'★'.repeat(n)}<s>${'★'.repeat(5-n)}</s></span>`;
+const opt=(arr,sel)=>arr.map(o=>`<option${o===sel?' selected':''}>${o}</option>`).join('');
+function page(crumbs,title,acts,body,lead){
+  return `<header class="ph"><div>${crumbs.length?`<nav class="bc" aria-label="Навигация">${crumbs.map((c,i)=>i<crumbs.length-1?`<a href="#${c[1]}">${c[0]}</a>${ic('right','sm')}`:`<span>${c[0]}</span>`).join('')}</nav>`:''}<h1>${title}</h1>${lead?`<p>${lead}</p>`:''}</div>${acts?`<div class="ph-a">${acts}</div>`:''}</header><div class="pb">${body}</div>`;
+}
+function spark(v){const W=100,H=24,mn=Math.min(...v),mx=Math.max(...v),r=mx-mn||1;const p=v.map((n,i)=>`${(i*W/(v.length-1)).toFixed(1)},${(H-3-(n-mn)/r*(H-8)).toFixed(1)}`);return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="sa" d="M0,${H} L${p.join(' L')} L${W},${H} Z"/><path class="sl" d="M${p.join(' L')}"/></svg>`}
+const stat=(l,v,d,c,i,sp)=>`<div class="stat"><div class="st-l">${l}</div><div class="st-v">${v}</div><div class="st-d tc c-${c}">${d}${i?ic(i):''}</div>${sp?spark(sp).replace('class="spark"',`class="spark c-${c}"`):''}</div>`;
+const tabs=(items,cur,act)=>`<div class="tabs-w"><div class="tabs" role="tablist">${items.map(([k,t,n,c])=>`<button type="button" role="tab" aria-selected="${k===cur}" class="tab${k===cur?' on':''}" data-act="${act}" data-v="${k}">${t}${n!=null?bdg(n,k===cur?'primary':(c||'gray'),null,true):''}</button>`).join('')}</div></div>`;
+const pager=(shown,total)=>`<div class="ta-ft"><span>Показано с 1 по ${shown} из ${fmt(total)}</span><div class="ft-r"><select class="inp" aria-label="Строк на странице"><option>10</option><option>25</option><option>50</option></select><nav class="pgn" aria-label="Страницы"><button disabled aria-label="Назад">‹</button><button class="on">1</button><button>2</button><button>3</button><button disabled>…</button><button aria-label="Вперёд">›</button></nav></div></div>`;
+
+/* ---------- data (демо) ---------- */
+const STAGES=[
+ {k:'consult',t:'Подбор',d:'запрос и подборка объектов',nps:52,ans:167,trig:['Брокер отправил подборку в CRM','Клиент открыл подборку']},
+ {k:'show',t:'Показ',d:'просмотр объекта или шоурума',nps:61,ans:198,trig:['Показ отмечен брокером как «проведён»','Клиент отметил показ в приложении']},
+ {k:'deal',t:'Сделка',d:'бронь, ДДУ / ДКП, расчёты',nps:72,ans:156,trig:['Договор переведён в статус «Подписан»','Получено подтверждение оплаты']},
+ {k:'after',t:'Ключи и после',d:'приёмка и регистрация',nps:41,ans:91,trig:['Подписан акт приёма-передачи','Получена выписка ЕГРН']},
+];
+const stageT=k=>STAGES.find(s=>s.k===k).t;
+const ANSWERS=[
+ {id:1,c:'Ольга Ветрова',obj:'Пентхаус 186 м², Хамовники',s:'deal',a:'Мария Ковалёва',sc:10,cm:'Мария вела сделку от брони до регистрации, всё прозрачно и без спешки.',ch:'Планшет в офисе',d:'16 ноя, 14:20',next:'Отзыв на Яндекс Картах'},
+ {id:2,c:'Павел Ильин',obj:'Квартира 142 м², Пресня',s:'show',a:'Игорь Белов',sc:9,cm:'Показ подготовили отлично, ответили на все вопросы по дому.',ch:'Telegram · день 3',d:'16 ноя, 11:05',next:'Отзыв на Новострой-М'},
+ {id:3,c:'Светлана Окунева',obj:'ЖК «Береговой», 3 спальни',s:'after',a:'Анна Сорокина',sc:4,cm:'После передачи ключей никто не помог с замечаниями по приёмке.',ch:'Звонок брокера · день 5',d:'15 ноя, 18:40',tk:1047},
+ {id:4,c:'Артём Зуев',obj:'Дом 320 м², Новорижское ш.',s:'consult',a:'Дмитрий Лаптев',sc:7,cm:'Подборка хорошая, но хотелось больше вариантов в моём бюджете.',ch:'QR в презентации',d:'15 ноя, 10:12'},
+ {id:5,c:'Ирина Мельник',obj:'Квартира 128 м², Остоженка',s:'deal',a:'Мария Ковалёва',sc:10,cm:'Юристы проверили всё до мелочей. Спокойная сделка.',ch:'SMS · день 1',d:'14 ноя, 19:31',next:'Отзыв на Яндекс Картах'},
+ {id:6,c:'Кирилл Носов',obj:'Апартаменты 96 м², Сити',s:'after',a:'Елена Гусева',sc:6,cm:'Регистрация затянулась на три недели, статус узнавали сами.',ch:'Email брокера · день 3',d:'14 ноя, 09:47',tk:1046},
+ {id:7,c:'Марина Лебедева',obj:'Квартира 210 м², Патриаршие',s:'show',a:'Игорь Белов',sc:8,cm:'Всё хорошо, но показ начался на 20 минут позже.',ch:'SMS · день 1',d:'13 ноя, 16:02'},
+ {id:8,c:'Денис Орлов',obj:'ЖК «Левел Причальный», 2 спальни',s:'consult',a:'Анна Сорокина',sc:9,cm:'Быстро поняли запрос и сразу отсеяли лишнее.',ch:'QR на визитке',d:'13 ноя, 12:15',next:'Приглашён оставить отзыв'},
+ {id:9,c:'Татьяна Громова',obj:'Дом 280 м², Рублёво-Успенское ш.',s:'deal',a:'Дмитрий Лаптев',sc:3,cm:'Брокер долго не выходил на связь перед сделкой, нервничали.',ch:'Звонок брокера · день 5',d:'12 ноя, 20:10',tk:1045},
+ {id:10,c:'Алексей Фомин',obj:'Квартира 115 м², Хамовники',s:'after',a:'Мария Ковалёва',sc:10,cm:'Чек-лист приёмки очень помог, нашли все недочёты.',ch:'Push в приложении',d:'12 ноя, 08:55',next:'Отзыв на ЦИАН'},
+];
+const AGENTS=[
+ {n:'Мария Ковалёва',o:'Новостройки',nps:78,ans:142,avg:'9,4',offer:98,ment:31},
+ {n:'Игорь Белов',o:'Вторичный рынок',nps:64,ans:118,avg:'8,9',offer:93,ment:18},
+ {n:'Анна Сорокина',o:'Новостройки',nps:55,ans:131,avg:'8,6',offer:87,ment:14},
+ {n:'Елена Гусева',o:'Вторичный рынок',nps:41,ans:89,avg:'8,2',offer:64,ment:9},
+ {n:'Дмитрий Лаптев',o:'Загородная',nps:38,ans:74,avg:'8,0',offer:71,ment:6},
+];
+const PLATS=[['Яндекс Карты',4.8,212,1],['2ГИС',4.6,138,1],['Новострой-М',4.7,96,0],['ЦИАН',4.9,74,1],['Google',4.5,41,0],['Авито',4.8,22,0]];
+const WEEKLY=[44,47,46,51,49,53,52,55,54,57,56,58];
+const WEEKS=(()=>{const out=[],d=new Date(2026,7,24);for(let i=0;i<12;i++){const x=new Date(d);x.setDate(d.getDate()+i*7);out.push(String(x.getDate()).padStart(2,'0')+'.'+String(x.getMonth()+1).padStart(2,'0'))}return out})();
+const GOOD=[['Брокер на связи',128],['Юридическая проверка',96],['Точный подбор',84],['Сделка без стресса',71]];
+const BAD=[['Сроки регистрации',21],['Переносы показов',14],['Брокер не на связи',11],['Скрытые расходы',6]];
+const CASC=[
+ ['День 1','Первое приглашение',[['sms','SMS со ссылкой','Короткая персональная ссылка'],['push','Push в приложении','Если клиент установил приложение']]],
+ ['День 3','Если нет ответа',[['tg','MAX / Telegram-бот','Опрос прямо в чате'],['mail','Email от брокера','Письмо с фото и подписью брокера']]],
+ ['День 5','Последнее касание',[['call','Звонок брокера','Для сделок от 50 млн ₽'],['robot','Звонок-робот','Три вопроса голосом']]],
+];
+const CHSTAT=[['SMS со ссылкой',1024,214],['MAX / Telegram-бот',512,118],['Email от брокера',436,67],['Push в приложении',388,41],['Звонок брокера',96,79],['QR и планшет в офисе','—',93]];
+const PLACES=['Договор','Акт приёма-передачи','Визитка брокера','Презентация подборки','Переговорная','Планшет в офисе'];
+const QRS=[['Акт приёма-передачи','after','Все брокеры',171,128,'2 сен'],['Планшет в офисе','deal','Все брокеры',148,139,'2 сен'],['Договор','deal','Все брокеры',96,71,'2 сен'],['Визитка брокера','consult','Мария Ковалёва',64,38,'9 сен'],['Презентация подборки','consult','Все брокеры',52,27,'16 сен'],['Переговорная','show','Все брокеры',31,22,'7 окт']];
+const MATS=[['doc','Чек-лист приёмки квартиры от застройщика','after','PDF',214],['doc','Памятка: регистрация ДДУ и ДКП по шагам','deal','PDF',162],['doc','Как получить налоговый вычет за квартиру','after','PDF',133],['link','Подборка дизайнеров интерьера с портфолио','after','Ссылка',97],['doc','Гид по району: школы, клубы, рестораны','consult','PDF',71],['link','Партнёры: консьерж, клининг, переезд','after','Ссылка',58]];
+const PRIZES=[['Дизайн-проект кухни','от партнёрской студии'],['Сертификат 150 000 ₽','в салон мебели'],['Генеральная уборка','после ремонта'],['Переезд под ключ','упаковка и перевозка']];
+const CARDS={'Головной офис · Пресненская наб.':['g','g','g','g','g'],'Отдел новостроек':['g','b','w','g','g'],'Загородная недвижимость':['g','g','w','g','w']};
+const CARD_P=['Яндекс Карты','2ГИС','Google','Новострой-М','ЦИАН'];
+const CARD_L={g:['check','success','Данные актуальны'],w:['clock','warning','Ждёт модерации'],b:['excl','danger','Расхождение или дубликат']};
+const AI={1:'Ирина, спасибо за тёплые слова! Передадим их Марии. Рады, что выбор проекта и регистрация прошли спокойно, — желаем уюта в новом доме.',2:'Константин, приносим извинения за переносы показа. Руководитель отдела вторичного рынка уже разбирает ситуацию и свяжется с вами сегодня, чтобы согласовать удобное время.',4:'Павел, спасибо! Рады, что продажа прошла быстро и по хорошей цене. Будем рады помочь и с покупкой.'};
+const TPL='Спасибо, что нашли время написать отзыв! Мы передали его руководителю отдела и обязательно учтём. Если захотите обсудить детали — напишите нам, ответим лично.';
+
+/* ---------- state ---------- */
+const S={
+ ansTab:'all',ansQ:'',tkTab:'open',rvTab:'all',brTab:'all',stage:'deal',closed:{},menu:false,modal:null,
+ tickets:[
+  {id:1047,c:'Светлана Окунева',sc:4,r:'Нет помощи с замечаниями по приёмке',a:'Анна Сорокина',own:'Олег Пахомов',due:'Сегодня, 18:00',st:'new',ans:3},
+  {id:1046,c:'Кирилл Носов',sc:6,r:'Затянулась регистрация ДКП',a:'Елена Гусева',own:'Олег Пахомов',due:'Просрочено на 3 ч',late:true,st:'new',ans:6},
+  {id:1045,c:'Татьяна Громова',sc:3,r:'Брокер не выходил на связь перед сделкой',a:'Дмитрий Лаптев',own:'Руководитель загородного отдела',due:'Завтра, 12:00',st:'work',ans:9},
+  {id:1041,c:'Константин Р.',sc:2,r:'Дважды перенесли показ (отзыв в 2ГИС)',a:'Игорь Белов',own:'Руководитель вторичного рынка',due:'Сегодня, 20:00',st:'work'},
+  {id:1038,c:'Наталья Воронина',sc:5,r:'Не держали в курсе после сделки',a:'Анна Сорокина',own:'Олег Пахомов',due:'Решено 10 ноя',st:'done'},
+  {id:1036,c:'Юрий Савин',sc:6,r:'Неожиданные расходы на оформление',a:'Елена Гусева',own:'Олег Пахомов',due:'Решено 6 ноя',st:'done'},
+ ],
+ reviews:[
+  {id:1,src:'Яндекс Карты',o:'Новостройки',r:5,who:'Ирина М.',d:'12 ноя',txt:'Мария подобрала три проекта под наш запрос и честно рассказала о минусах каждого. Сопровождала до регистрации ДДУ, всё прошло без нервов.',st:'new',fromSurvey:true},
+  {id:2,src:'2ГИС',o:'Вторичный рынок',r:2,who:'Константин',d:'11 ноя',txt:'Показ перенесли дважды в последний момент. Для объекта за 120 млн ожидал другого уровня сервиса.',st:'new'},
+  {id:3,src:'Новострой-М',o:'Новостройки',r:4,who:'Наталья В.',d:'10 ноя',txt:'Хорошая юридическая проверка, но после сделки долго ждали документы, никто не держал в курсе.',st:'answered',ans:'Наталья, спасибо за отзыв. Мы добавили уведомления о статусе регистрации в личный кабинет, чтобы вы не ждали в неизвестности.'},
+  {id:4,src:'ЦИАН',o:'Вторичный рынок',r:5,who:'Павел И.',d:'9 ноя',txt:'Продали квартиру в Хамовниках за шесть недель и по цене выше нашей оценки. Отличная подготовка объекта к показам.',st:'new',fromSurvey:true},
+  {id:5,src:'Google',o:'Загородная',r:1,who:'Гость',d:'7 ноя',txt:'Брокер не перезвонил после запроса по дому в Подмосковье.',st:'appeal'},
+ ],
+ casc:{},mailText:'{имя}, это {брокер} из «Эстейт Лиги». Спасибо, что доверили нам {этап}! Оцените, пожалуйста, как всё прошло — 2 минуты: {ссылка}',
+ night:true,qr:{stage:'deal',office:'Новостройки',agent:'Мария Ковалёва',place:'Договор'},
+ mats:{0:1,1:1,2:1,3:1,4:0,5:1},pers:{broker:1,obj:1,social:1},
+ act:{on:true,thr:'Оценка 9–10',when:'Сразу после опроса',plats:PLATS.map(p=>!!p[3]),tg:true,own:'Олег Пахомов — директор по клиентскому сервису',sla:'4 часа'},
+ pv:{step:'sms',sc:null,chips:[]},
+};
+STAGES.forEach(s=>{S.casc[s.k]={sms:1,push:1,tg:1,mail:1,call:s.k==='deal'||s.k==='after'?1:0,robot:0}});
+
+const ROUTES=[
+ {id:'dashboard',t:'Панель',i:'home'},
+ {id:'answers',t:'Ответы клиентов',i:'chat',g:'Опросы'},
+ {id:'tickets',t:'Обращения',i:'warn',g:'Опросы',b:()=>{const n=S.tickets.filter(t=>t.st!=='done').length;return n?[n,'danger']:null}},
+ {id:'mailings',t:'Рассылки опросов',i:'plane',g:'Опросы'},
+ {id:'qr',t:'QR-коды',i:'qr',g:'Опросы'},
+ {id:'rewards',t:'Розыгрыш и материалы',i:'gift',g:'Опросы'},
+ {id:'reviews',t:'Отзывы',i:'star',g:'Репутация',b:()=>{const n=S.reviews.filter(r=>r.st==='new').length;return n?[n,'warning']:null}},
+ {id:'activator',t:'Активатор отзывов',i:'bolt',g:'Репутация'},
+ {id:'cards',t:'Карточки компании',i:'pin',g:'Репутация'},
+ {id:'brokers',t:'Брокеры',i:'users',g:'Команда'},
+];
+let cur='dashboard';
+
+/* ---------- shell ---------- */
+$('#app').innerHTML=`<div class="lay" id="lay">
+ <div class="sb-ov" data-act="sb-close"></div>
+ <aside class="sb" aria-label="Меню">
+  <div class="sb-h"><a class="logo" href="#dashboard" aria-label="Спектра — на главную"><i></i>Спектра</a></div>
+  <div class="sb-n" id="nav"></div>
+ </aside>
+ <div class="mn">
+  <header class="tb">
+   <button class="ib burger" data-act="sb-open" aria-label="Открыть меню">${ic('bars','lg')}</button>
+   ${bdg('Демо-данные','gray')}
+   <div class="tb-r">
+    <label class="gs">${ic('search')}<input class="inp" id="gs" type="search" placeholder="Клиент, брокер, объект" aria-label="Глобальный поиск"></label>
+    <button class="ib" data-act="notifs" aria-label="Уведомления">${ic('bell','lg')}<span id="bell"></span></button>
+    <div class="um"><button class="av" data-act="menu" aria-label="Меню пользователя" aria-haspopup="menu">ОП</button><div class="dd" id="dd" hidden></div></div>
+   </div>
+  </header>
+  <main class="pg" id="main"></main>
+ </div>
+</div>
+<div id="mo"></div>
+<div class="nt-w" id="nt" aria-live="polite"></div>`;
+
+function navHTML(){
+  const item=r=>{const b=r.b&&r.b();return `<li><a class="it${r.id===cur?' on':''}" href="#${r.id}"${r.id===cur?' aria-current="page"':''}>${ic(r.i)}<span>${r.t}</span>${b?bdg(b[0],b[1],null,true):''}</a></li>`};
+  const groups=[...new Set(ROUTES.filter(r=>r.g).map(r=>r.g))];
+  return `<button class="tenant" data-act="tenant"><span class="tav">ЭЛ</span><span><b>Эстейт Лига</b><small>Элитная недвижимость · Москва</small></span>${ic('updown')}</button>
+  <div class="grp"><ul>${ROUTES.filter(r=>!r.g).map(item).join('')}</ul></div>
+  ${groups.map(g=>`<div class="grp${S.closed[g]?' closed':''}"><button class="grp-l" data-act="grp" data-v="${g}" aria-expanded="${!S.closed[g]}">${g}${ic('up')}</button><ul>${ROUTES.filter(r=>r.g===g).map(item).join('')}</ul></div>`).join('')}
+  <div class="sb-ft">Спектра от Сервизории · прототип кабинета, данные демонстрационные</div>`;
+}
+
+/* ---------- shared blocks ---------- */
+function lineChart(){
+  const v=WEEKLY,W=640,H=230,pl=34,pr=14,pt=14,pb=30,mn=40,mx=60;
+  const x=i=>pl+i*(W-pl-pr)/(v.length-1),y=n=>pt+(mx-n)*(H-pt-pb)/(mx-mn);
+  const pts=v.map((n,i)=>`${x(i).toFixed(1)},${y(n).toFixed(1)}`);
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="NPS по неделям: с ${v[0]} до ${v[v.length-1]}">
+   ${[40,45,50,55,60].map(g=>`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${y(g)}" y2="${y(g)}"/><text class="ax" x="${pl-8}" y="${y(g)+4}" text-anchor="end">${g}</text>`).join('')}
+   ${WEEKS.map((l,i)=>i%2===0?`<text class="ax" x="${x(i)}" y="${H-8}" text-anchor="middle">${l}</text>`:'').join('')}
+   <path class="ar" d="M${pts[0]} L${pts.join(' L')} L${x(v.length-1)},${y(mn)} L${x(0)},${y(mn)} Z"/>
+   <path class="ln" d="M${pts.join(' L')}"/>
+   ${v.map((n,i)=>`<circle cx="${x(i)}" cy="${y(n)}" r="3.5"><title>Неделя с ${WEEKS[i]}: NPS +${n}</title></circle>`).join('')}
+  </svg>`;
+}
+const stageNps=()=>STAGES.map(s=>{const c=s.nps>=60?'success':s.nps>=45?'primary':'warning';return `<div class="sn-r"><div><b>${s.t}</b><small>${s.ans} ответов</small></div><div class="bar"><span class="bar-i c-${c}" style="width:${s.nps}%"></span></div>${bdg('+'+s.nps,c)}</div>`}).join('')+`<p class="note">NPS — доля оценок 9–10 минус доля оценок 0–6. «Ключи и после» проседает из-за сроков регистрации.</p>`;
+function attention(){
+  const late=S.tickets.find(t=>t.late&&t.st!=='done');const nr=S.reviews.filter(r=>r.st==='new');
+  const rows=[];
+  if(late) rows.push(['danger','clock',`Обращение #${late.id} просрочено`,`${late.c}, оценка ${late.sc}: ${late.r.toLowerCase()}`,'tickets','Открыть']);
+  if(nr.length) rows.push(['warning','star',`${nr.length} ${nr.length===1?'отзыв ждёт':'отзыва ждут'} ответа`,`${[...new Set(nr.map(r=>r.src))].join(', ')} · черновики ответов готовы`,'reviews','Ответить']);
+  rows.push(['warning','pin','Дубликат карточки в 2ГИС','Отдел новостроек · заявка на удаление отправлена','cards','Посмотреть']);
+  rows.push(['primary','users','Елена Гусева предлагает опрос 64% клиентов','У остальных брокеров — от 71%','brokers','К брокерам']);
+  return `<div class="ls">${rows.map(([c,i,t,d,h,l])=>`<div><span class="ico c-${c}">${ic(i)}</span><div class="tx"><b>${t}</b><span>${d}</span></div><a class="lnk" href="#${h}">${l}</a></div>`).join('')}</div>`;
+}
+const themes=()=>`<div class="th2"><div><h4>Хвалят</h4>${GOOD.map(([t,n])=>`<div class="thr"><span>${t}</span>${bdg(n,'success')}</div>`).join('')}</div><div><h4>Жалуются</h4>${BAD.map(([t,n])=>`<div class="thr"><span>${t}</span>${bdg(n,'danger')}</div>`).join('')}</div></div>`;
+function nextCell(a){
+  if(a.tk){const t=S.tickets.find(x=>x.id===a.tk);return bdg(`Обращение #${a.tk}`,t&&t.st==='done'?'success':'danger')}
+  if(a.next) return bdg(a.next,'success');
+  return '<span class="muted">—</span>';
+}
+function ansRows(list){
+  return list.map(a=>`<tr class="click" data-act="answer" data-v="${a.id}" data-q="${esc((a.c+' '+a.a+' '+a.obj+' '+a.cm).toLowerCase())}"><td><span class="who"><span class="av">${ini(a.c)}</span><span><b>${a.c}</b><span class="sub">${a.obj}</span></span></span></td><td>${bdg(stageT(a.s),'gray')}</td><td>${a.a}</td><td>${bdg(a.sc,scColor(a.sc))}</td><td><span class="trunc" title="${esc(a.cm)}">${a.cm}</span></td><td>${nextCell(a)}</td><td class="muted" style="white-space:nowrap">${a.d}</td></tr>`).join('');
+}
+const ansHead=`<thead><tr><th>Клиент</th><th>Этап</th><th>Брокер</th><th>Оценка${ic('updown')}</th><th>Комментарий</th><th>Что дальше</th><th>Дата${ic('updown')}</th></tr></thead>`;
+
+/* ---------- views ---------- */
+const V={};
+V.dashboard=()=>{
+  const open=S.tickets.filter(t=>t.st!=='done'),late=open.filter(t=>t.late).length;
+  return page([],'Панель',btn('Предпросмотр опроса',{i:'eye',a:'data-act="preview"'}),`
+  <div class="g4">
+   ${stat('NPS','+58','+6 к октябрю','success','trup',[49,51,50,53,52,55,54,57,56,58])}
+   ${stat('Ответов за 30 дней','612','+84 к октябрю','success','trup',[38,41,44,40,47,52,49,55,58,61])}
+   ${stat('Рейтинг на площадках','4,7 ★','+29 отзывов за месяц','success','trup',[45,45,46,46,46,47,46,47,47,47])}
+   ${stat('Открытые обращения',open.length,late?`${late} просрочено`:'Все в срок',late?'danger':'success',late?'clock':'check')}
+  </div>
+  <div class="g2">
+   ${sec('NPS по неделям','Индекс лояльности клиентов за 12 недель',lineChart())}
+   ${sec('NPS по этапам сделки','Где клиенты довольны, а где проседаем',stageNps())}
+  </div>
+  <div class="g2">
+   ${sec('Требует внимания','Что стоит сделать сегодня',attention(),{flush:true})}
+   ${sec('О чём говорят клиенты','Темы из комментариев в опросах за 30 дней',themes())}
+  </div>
+  <div class="ta"><div class="ta-h"><div><h3>Последние ответы</h3><p>Нажмите на строку, чтобы открыть ответ</p></div><div class="acts"><a class="lnk" href="#answers">Все ответы${ic('right')}</a></div></div>
+   <div class="sc"><table class="t">${ansHead}<tbody>${ansRows(ANSWERS.slice(0,5))}</tbody></table></div></div>`);
+};
+V.answers=()=>{
+  const f={all:()=>1,pro:a=>a.sc>=9,neu:a=>a.sc>=7&&a.sc<=8,det:a=>a.sc<=6}[S.ansTab];
+  const q=S.ansQ.toLowerCase();
+  const list=ANSWERS.filter(f).filter(a=>!q||(a.c+' '+a.a+' '+a.obj+' '+a.cm).toLowerCase().includes(q));
+  const tot={all:612,pro:404,neu:159,det:49}[S.ansTab];
+  return page([['Ответы клиентов','answers'],['Список']],'Ответы клиентов',btn('Экспорт',{i:'download',a:'data-act="note" data-v="Выгрузка в Excel готовится (в прототипе)"'})+btn('Предпросмотр опроса',{c:'primary',i:'eye',a:'data-act="preview"'}),`
+  ${tabs([['all','Все',612],['pro','Промоутеры 9–10',404,'success'],['neu','Нейтральные 7–8',159,'warning'],['det','Критики 0–6',49,'danger']],S.ansTab,'ans-tab')}
+  <div class="ta"><div class="ta-tb"><label class="gs">${ic('search')}<input class="inp" type="search" data-in="ans-q" value="${esc(S.ansQ)}" placeholder="Поиск" aria-label="Поиск по ответам"></label><button class="ib" data-act="note" data-v="Фильтры: этап, брокер, отдел, канал, период" aria-label="Фильтры">${ic('funnel')}</button></div>
+   <div class="sc"><table class="t">${ansHead}<tbody id="ans-body">${ansRows(list)}</tbody></table>${list.length?'':'<div class="empty">Ничего не найдено</div>'}</div>
+   ${pager(list.length,list.length<ANSWERS.filter(f).length?list.length:tot)}</div>`,'Все оценки и комментарии клиентов по этапам сделки. Ответы 9–10 уходят в активатор отзывов, 0–6 — в обращения.');
+};
+V.tickets=()=>{
+  const map={open:'new',work:'work',done:'done'},list=S.tickets.filter(t=>t.st===map[S.tkTab]);
+  const cnt=k=>S.tickets.filter(t=>t.st===k).length;
+  const stB={new:['Новое','warning'],work:['В работе','primary'],done:['Решено','success']};
+  return page([['Обращения','tickets'],['Список']],'Обращения',btn('Настроить маршрутизацию',{i:'cog',a:'data-go="activator"'}),`
+  <div class="g4" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+   ${stat('Открыто',cnt('new')+cnt('work'),cnt('new')+' новых, ждут реакции',cnt('new')?'warning':'success',cnt('new')?'clock':'check')}
+   ${stat('Время первой реакции','2 ч 40 мин','Цель — до 4 часов','success','check')}
+   ${stat('Решено за 30 дней',17+cnt('done')-2,'Клиенты не ушли в публичный негатив','success','trup')}
+  </div>
+  ${tabs([['open','Новые',cnt('new'),'warning'],['work','В работе',cnt('work')],['done','Решённые',cnt('done')]],S.tkTab,'tk-tab')}
+  <div class="ta"><div class="sc"><table class="t"><thead><tr><th>№</th><th>Клиент</th><th>Причина</th><th>Брокер</th><th>Ответственный</th><th>Срок</th><th>Статус</th><th></th></tr></thead><tbody>
+   ${list.map(t=>`<tr><td class="muted">#${t.id}</td><td><span class="who"><span><b>${t.c}</b><span class="sub">оценка ${bdg(t.sc,'danger',null,true)}</span></span></span></td><td>${t.r}</td><td>${t.a}</td><td>${t.own}</td><td>${t.late&&t.st!=='done'?`<span class="tc c-danger" style="font-weight:500">${t.due}</span>`:`<span class="muted">${t.due}</span>`}</td><td>${bdg(...stB[t.st])}</td><td class="num">${t.st==='new'?`<button class="lnk" data-act="tk-take" data-v="${t.id}">Взять в работу</button>`:t.st==='work'?`<button class="lnk" data-act="tk-close" data-v="${t.id}">${ic('check')}Решено</button>`:t.ans?`<button class="lnk gray" data-act="answer" data-v="${t.ans}">Ответ клиента</button>`:''}</td></tr>`).join('')}
+  </tbody></table>${list.length?'':'<div class="empty">Здесь пусто — все обращения разобраны</div>'}</div></div>`,'Оценки 0–6 из опросов и негативные отзывы. Свяжитесь с клиентом раньше, чем он напишет публично.');
+};
+V.mailings=()=>{
+  const st=STAGES.find(s=>s.k===S.stage),c=S.casc[S.stage];
+  const sample=S.mailText.replace('{имя}','Ольга').replace('{брокер}','Мария Ковалёва').replace('{этап}',{consult:'подбор',show:'показ',deal:'сделку',after:'передачу ключей'}[S.stage]).replace('{ссылка}','spektra.app/s/7Kq2').replace('{объект}','пентхаус в Хамовниках');
+  return page([],'Рассылки опросов',btn('Предпросмотр опроса',{i:'eye',a:'data-act="preview"'}),`
+  ${tabs(STAGES.map(s=>[s.k,s.t]),S.stage,'stage')}
+  <div class="g3">
+   <div class="col span2">
+    ${sec('Когда отправляем',`Опрос этапа «${st.t}» запускается событием в CRM`,`<div class="stack"><div class="fg">
+      <div class="fl"><label class="req" for="m-trig">Событие в CRM</label><select class="inp" id="m-trig">${opt(st.trig,st.trig[0])}</select></div>
+      <div class="fl"><label for="m-delay">Задержка</label><select class="inp" id="m-delay">${opt(['Через 15 минут','Через 2 часа','На следующий день в 10:00'],S.stage==='show'?'Через 15 минут':'Через 2 часа')}</select></div></div>
+      <div class="tgr">${tg(S.night,'data-act="night"','Не беспокоить ночью')}<div><b>Не беспокоить ночью</b><span>Сообщения уходят с 9:00 до 21:00 по времени клиента</span></div></div></div>`)}
+    ${sec('Напоминания, если клиент не ответил','Следующее касание уходит, только если на предыдущее нет ответа. Не больше трёх касаний за этап',`<div class="ls">${CASC.map(([d,h,chs])=>`<div style="align-items:flex-start"><span class="ico c-primary" style="font-weight:600;font-size:12px">${d.split(' ')[1]}</span><div class="tx"><b>${d} · ${h}</b>${chs.map(([k,t,s])=>`<div class="tgr" style="margin-top:12px">${tg(c[k],`data-act="casc" data-v="${k}"`,t)}<div><b>${t}</b><span>${s}</span></div></div>`).join('')}</div></div>`).join('')}</div>`,{flush:true})}
+    ${sec('Текст приглашения','Сообщение подписано брокером — клиенты охотнее отвечают знакомому человеку',`<div class="stack"><div class="fl"><label for="m-text">Шаблон SMS и сообщения в мессенджере</label><textarea class="inp" id="m-text" data-in="mail-text">${esc(S.mailText)}</textarea><div class="tok"><span class="hint">Подстановки:</span>${['{имя}','{брокер}','{этап}','{объект}','{ссылка}'].map(t=>bdg(t,'gray')).join('')}</div></div><div class="pv"><small>Так увидит клиент</small><span id="m-pv">${esc(sample)}</span></div></div>`)}
+    <div class="fa">${btn('Сохранить',{c:'primary',a:'data-act="note" data-v="Настройки рассылки сохранены"'})}${btn('Отмена',{a:'data-act="reset-mail"'})}</div>
+   </div>
+   <div class="col">
+    ${sec('Каналы за 30 дней','Все этапы',`<table class="t"><thead><tr><th>Канал</th><th class="num">Отправлено</th><th class="num">Ответов</th></tr></thead><tbody>${CHSTAT.map(([n,s,a])=>`<tr><td>${n}</td><td class="num muted">${typeof s==='number'?fmt(s):s}</td><td class="num">${a}</td></tr>`).join('')}</tbody></table>`,{flush:true})}
+    ${sec('Правила','',`<ul class="steps">${[['primary','1','От имени брокера','Фото, имя и подпись брокера в каждом сообщении'],['primary','2','Персонально','Имя клиента и его объект в тексте'],['primary','3','Отписка в один клик','Клиент может отказаться от опросов']].map(([c,n,b,s])=>`<li><span class="n c-${c}">${n}</span><div><b>${b}</b><span>${s}</span></div></li>`).join('')}</ul>`)}
+   </div>
+  </div>`,'Когда и по каким каналам клиент получает приглашение пройти опрос на каждом этапе сделки.');
+};
+V.qr=()=>{
+  const q=S.qr;
+  return page([['QR-коды','qr'],['Список']],'QR-коды','',`
+  ${sec('Новый QR-код','Код помечен этапом, отделом, брокером и местом — в отчётах видно, какое размещение работает',`<div class="qr-g"><div class="fg">
+    <div class="fl"><label class="req" for="q-stage">Этап</label><select class="inp" id="q-stage" data-ch="qr" data-k="stage">${STAGES.map(s=>`<option value="${s.k}"${s.k===q.stage?' selected':''}>${s.t}</option>`).join('')}</select></div>
+    <div class="fl"><label class="req" for="q-office">Отдел</label><select class="inp" id="q-office" data-ch="qr" data-k="office">${opt(['Новостройки','Вторичный рынок','Загородная'],q.office)}</select></div>
+    <div class="fl"><label for="q-agent">Брокер</label><select class="inp" id="q-agent" data-ch="qr" data-k="agent">${opt(['Все брокеры',...AGENTS.map(a=>a.n)],q.agent)}</select></div>
+    <div class="fl"><label class="req" for="q-place">Где размещаем</label><select class="inp" id="q-place" data-ch="qr" data-k="place">${opt(PLACES,q.place)}</select></div>
+    <div class="fl" style="grid-column:1/-1"><span class="hint">Клиент сканирует код и сразу попадает в опрос этапа «${stageT(q.stage)}» без ввода телефона. Ответ привяжется к брокеру и месту размещения.</span></div>
+   </div><div class="qr-pv"><canvas class="qr" id="qrc" width="200" height="200" aria-label="QR-код опроса"></canvas><code>${qrCode()}</code><div class="fa" style="justify-content:center">${btn('PNG',{sm:1,i:'download',a:'data-act="note" data-v="Макет для печати подготовлен (в прототипе)"'})}${btn('Ссылка',{sm:1,i:'copy',a:'data-act="copy"'})}</div></div></div>`)}
+  <div class="ta"><div class="ta-h"><div><h3>Размещённые коды</h3><p>Сканирования и ответы за всё время</p></div></div><div class="sc"><table class="t"><thead><tr><th>Место</th><th>Этап</th><th>Брокер</th><th class="num">Сканирований${ic('updown')}</th><th class="num">Ответов</th><th>Создан</th><th></th></tr></thead><tbody>
+   ${QRS.map(([p,s,a,sc,an,d])=>`<tr><td><span class="who"><span class="ico c-gray">${ic('qr')}</span><b>${p}</b></span></td><td>${bdg(stageT(s),'gray')}</td><td>${a}</td><td class="num">${sc}</td><td class="num">${an}</td><td class="muted">${d}</td><td class="num"><button class="lnk" data-act="note" data-v="Макет «${p}» подготовлен (в прототипе)">${ic('download')}Скачать</button></td></tr>`).join('')}
+  </tbody></table></div></div>`,'Коды для договора, акта, визиток и планшета в офисе. Брокер предлагает отсканировать код на встрече.');
+};
+V.rewards=()=>page([],'Розыгрыш и материалы','',`
+  <div class="g2" style="align-items:start">
+   ${sec('Квартальный розыгрыш','Участвуют все, кто прошёл опрос, — оценка не важна',`<div class="stack"><dl class="dl"><div><dt>Период</dt><dd>IV квартал 2026</dd></div><div><dt>Дата розыгрыша</dt><dd>31 декабря 2026</dd></div><div><dt>Участников</dt><dd>612</dd></div><div><dt>Условие</dt><dd>Пройти опрос на любом этапе</dd></div></dl>
+     <div class="prz">${PRIZES.map(([b,s])=>`<div><span class="ico c-primary">${ic('gift')}</span><span><b>${b}</b><span>${s}</span></span></div>`).join('')}</div>
+     <div class="call c-primary">${ic('info')}<span>Подарки не связаны с отзывами: правила площадок запрещают поощрять клиентов за отзывы. Приглашение к отзыву клиент получает отдельно, через активатор.</span></div></div>`,{acts:btn('Изменить призы',{sm:1,a:'data-act="note" data-v="Редактор призов (в прототипе)"'})})}
+   ${sec('Персонализация приглашений','Что видит клиент в сообщении и в начале опроса',`<div class="stack">${[['broker','Писать от имени брокера','Фото, имя и подпись брокера вместо «Команда Эстейт Лиги»'],['obj','Упоминать объект клиента','«…как прошла сделка по пентхаусу в Хамовниках»'],['social','Показывать, сколько клиентов уже ответили','«В этом месяце ответили 214 клиентов — спасибо, что помогаете нам»']].map(([k,b,s])=>`<div class="tgr">${tg(S.pers[k],`data-act="pers" data-v="${k}"`,b)}<div><b>${b}</b><span>${s}</span></div></div>`).join('')}</div>`)}
+  </div>
+  <div class="ta"><div class="ta-h"><div><h3>Полезные материалы после опроса</h3><p>Клиент получает их сразу после ответа — это повод пройти опрос до конца</p></div><div class="acts">${btn('Добавить материал',{sm:1,c:'primary',i:'plus',a:'data-act="note" data-v="Загрузка материала (в прототипе)"'})}</div></div>
+   <div class="sc"><table class="t"><thead><tr><th>Материал</th><th>Этап</th><th>Формат</th><th class="num">Открыли</th><th class="num">Показывать</th></tr></thead><tbody>
+   ${MATS.map(([i,t,s,f,n],k)=>`<tr><td><span class="who"><span class="ico c-gray">${ic(i)}</span><b>${t}</b></span></td><td>${bdg(stageT(s),'gray')}</td><td class="muted">${f}</td><td class="num">${n}</td><td class="num">${tg(S.mats[k],`data-act="mat" data-v="${k}"`,t)}</td></tr>`).join('')}
+   </tbody></table></div></div>`,'Чем клиент мотивирован ответить: личное обращение, полезные материалы и квартальный розыгрыш.');
+V.reviews=()=>{
+  const f={all:()=>1,new:r=>r.st==='new',neg:r=>r.r<=3,appeal:r=>r.st==='appeal'}[S.rvTab],list=S.reviews.filter(f);
+  const n=k=>S.reviews.filter({new:r=>r.st==='new',neg:r=>r.r<=3,appeal:r=>r.st==='appeal'}[k]).length;
+  return page([['Отзывы','reviews'],['Список']],'Отзывы',btn('Подключить площадку',{i:'plus',a:'data-act="note" data-v="Подключение площадки (в прототипе)"'}),`
+  <div class="g6">${PLATS.map(([p,r,c])=>`<div class="stat cmp"><div class="st-l">${p}</div><div class="st-v">${String(r).replace('.',',')} <span class="stars" style="font-size:16px">★</span></div><div class="st-d">${c} отзывов</div></div>`).join('')}</div>
+  ${tabs([['all','Все',S.reviews.length],['new','Без ответа',n('new'),'warning'],['neg','Негатив',n('neg'),'danger'],['appeal','Обжалование',n('appeal')]],S.rvTab,'rv-tab')}
+  <div class="ta">${list.length?list.map(rvHTML).join(''):'<div class="empty">Все отзывы обработаны</div>'}</div>`,'Отзывы со всех площадок в одной ленте. ИИ готовит черновик ответа — остаётся проверить и опубликовать.');
+};
+function rvHTML(r){
+  const stB={new:['Без ответа','warning'],answered:['Ответ опубликован','success'],appeal:['На обжаловании','gray']}[r.st];
+  let body='';
+  if(r.st==='new') body=`<div class="reply"><small>${ic('sparkles','sm')}Черновик ответа · ИИ Спектры</small><textarea class="inp" id="rv-${r.id}" aria-label="Текст ответа">${esc(AI[r.id]||TPL)}</textarea><div class="fa">${btn('Опубликовать ответ',{c:'primary',sm:1,a:`data-act="rv-pub" data-v="${r.id}"`})}${btn('Шаблон',{sm:1,a:`data-act="rv-tpl" data-v="${r.id}"`})}${r.r<=2?`<button class="lnk danger" data-act="rv-appeal" data-v="${r.id}">Обжаловать отзыв</button>`:''}</div></div>`;
+  else if(r.st==='answered') body=`<div class="reply"><small>Ответ компании</small>${esc(r.ans)}</div>`;
+  else body=`<div class="call c-gray">${ic('clock')}<span>Площадка рассматривает жалобу на отзыв, обычно 3–5 рабочих дней. Мы сообщим о решении.</span></div>`;
+  return `<article class="rv"><div class="rv-m"><span class="av">${ini(r.who)}</span><b>${r.who}</b>${stars(r.r)}${bdg(r.src,'gray')}<span class="muted">${r.o} · ${r.d}</span>${r.fromSurvey?bdg('Из активатора','primary','bolt'):''}<span style="margin-left:auto">${bdg(...stB)}</span></div><p>${r.txt}</p>${body}</article>`;
+}
+V.activator=()=>{
+  const a=S.act;
+  return page([],'Активатор отзывов',btn('Предпросмотр опроса',{i:'eye',a:'data-act="preview"'}),`
+  <div class="g3">
+   <div class="col span2">
+    ${sec('Правила','Кому и когда предлагать оставить публичный отзыв',`<div class="stack"><div class="tgr">${tg(a.on,'data-act="act-on"','Активатор включён')}<div><b>Активатор включён</b><span>Довольный клиент сразу после опроса видит кнопки площадок</span></div></div>
+      <div class="fg"><div class="fl"><label for="a-thr">Кого приглашать</label><select class="inp" id="a-thr" data-ch="act" data-k="thr">${opt(['Оценка 9–10','Только 10'],a.thr)}</select></div>
+      <div class="fl"><label for="a-when">Когда</label><select class="inp" id="a-when" data-ch="act" data-k="when">${opt(['Сразу после опроса','На следующий день'],a.when)}</select></div></div></div>`)}
+    ${sec('Площадки','Клиент увидит кнопки в этом порядке. Лучше 2–3 площадки, где отзывы нужнее всего',`<div class="ls">${PLATS.map(([p,r,c],i)=>`<label style="cursor:pointer"><input type="checkbox" class="cb" data-act="act-plat" data-v="${i}"${a.plats[i]?' checked':''}><div class="tx"><b>${p}</b><span>${String(r).replace('.',',')} ★ · ${c} отзывов</span></div>${c<50?bdg('Мало отзывов','warning'):''}</label>`).join('')}</div>`,{flush:true})}
+    ${sec('Негативные ответы (0–6)','Клиент не попадает на площадки — вместо этого создаётся обращение',`<div class="stack"><div class="fg"><div class="fl"><label for="a-own">Ответственный</label><select class="inp" id="a-own" data-ch="act" data-k="own">${opt(['Олег Пахомов — директор по клиентскому сервису','Руководитель отдела брокера'],a.own)}</select></div>
+      <div class="fl"><label for="a-sla">Срок первой реакции</label><select class="inp" id="a-sla" data-ch="act" data-k="sla">${opt(['4 часа','24 часа'],a.sla)}</select></div></div>
+      <div class="tgr">${tg(a.tg,'data-act="act-tg"','Уведомлять в Telegram')}<div><b>Уведомлять в Telegram</b><span>Бот @spektra_bot пришлёт оценку, комментарий и контакт клиента</span></div></div></div>`)}
+    <div class="fa">${btn('Сохранить',{c:'primary',a:'data-act="note" data-v="Настройки активатора сохранены"'})}</div>
+   </div>
+   <div class="col">
+    ${sec('Как это работает','',`<ul class="steps">
+      <li><span class="n c-primary">1</span><div><b>Клиент проходит опрос</b><span>SMS, QR в договоре, планшет или бот</span></div></li>
+      <li><span class="n c-success">2</span><div><b>Оценка 9–10</b><span>Спасибо и кнопки площадок: ${PLATS.filter((p,i)=>a.plats[i]).map(p=>p[0]).join(', ')||'не выбраны'}</span></div></li>
+      <li><span class="n c-danger">2</span><div><b>Оценка 0–6</b><span>Обращение в кабинете${a.tg?' и сообщение в Telegram':''}, срок реакции — ${a.sla}</span></div></li>
+      <li><span class="n c-primary">3</span><div><b>Отзыв появился на площадке</b><span>Спектра находит его и готовит черновик ответа</span></div></li></ul>`)}
+    ${sec('За 30 дней','',`<dl class="dl one"><div><dt>Пригласили оставить отзыв</dt><dd>214 клиентов</dd></div><div><dt>Новых отзывов из активатора</dt><dd>29</dd></div><div><dt>Негатив разобран до публикации</dt><dd>23 обращения</dd></div></dl>`)}
+   </div>
+  </div>`,'Довольных клиентов приглашаем на площадки, а недовольных — к директору по сервису раньше, чем они напишут публично.');
+};
+V.cards=()=>page([['Карточки компании','cards'],['Список']],'Карточки компании',btn('Изменить данные',{c:'primary',a:'data-act="note" data-v="Редактор карточки (в прототипе)"'}),`
+  <div class="g4">
+   ${stat('Просмотры карточек','12 480','+9% к октябрю','success','trup')}
+   ${stat('Звонки из карточек','318','+24 к октябрю','success','trup')}
+   ${stat('Построили маршрут','544','+31 к октябрю','success','trup')}
+   ${stat('Дубликаты','2','1 удалён, 1 в работе','warning','clock')}
+  </div>
+  <div class="ta"><div class="ta-h"><div><h3>Синхронизация данных</h3><p>Изменили часы работы в Спектре — обновились все площадки</p></div></div>
+   <div class="sc"><table class="t"><thead><tr><th>Карточка</th>${CARD_P.map(p=>`<th class="ctr">${p}</th>`).join('')}</tr></thead><tbody>
+   ${Object.entries(CARDS).map(([o,r])=>`<tr><td><b style="font-weight:500">${o}</b></td>${r.map(s=>`<td class="ctr" title="${CARD_L[s][2]}">${ic(CARD_L[s][0],'tc c-'+CARD_L[s][1])}</td>`).join('')}</tr>`).join('')}
+   </tbody></table></div>
+   <div class="ta-ft" style="justify-content:flex-start;gap:20px">${Object.values(CARD_L).map(([i,c,t])=>`<span class="who" style="gap:6px">${ic(i,'sm tc c-'+c)}${t}</span>`).join('')}</div></div>
+  ${sec('Что требует внимания','',`<div class="ls">
+   <div><span class="ico c-danger">${ic('excl')}</span><div class="tx"><b>2ГИС · Отдел новостроек</b><span>Найден дубликат карточки со старым телефоном. Заявка на удаление отправлена 14 ноября</span></div>${bdg('В работе','primary')}</div>
+   <div><span class="ico c-warning">${ic('clock')}</span><div class="tx"><b>Google · Отдел новостроек, Загородная недвижимость</b><span>Новые часы работы на праздники ждут модерации</span></div>${bdg('Модерация','warning')}</div>
+   <div><span class="ico c-warning">${ic('clock')}</span><div class="tx"><b>ЦИАН · Загородная недвижимость</b><span>Обновлены фото офиса</span></div>${bdg('Модерация','warning')}</div></div>`,{flush:true})}`,'Адрес, телефоны и часы работы офисов на всех площадках. Спектра следит, чтобы данные совпадали.');
+V.brokers=()=>{
+  const list=AGENTS.filter(a=>S.brTab==='all'||a.o===S.brTab);
+  return page([['Брокеры','brokers'],['Список']],'Брокеры','',`
+  ${tabs([['all','Все'],['Новостройки','Новостройки'],['Вторичный рынок','Вторичный рынок'],['Загородная','Загородная']],S.brTab,'br-tab')}
+  <div class="ta"><div class="sc"><table class="t"><thead><tr><th>Брокер</th><th>Отдел</th><th>NPS${ic('updown')}</th><th class="num">Ответов</th><th class="num">Средняя оценка</th><th>Предлагает опрос</th><th class="num">Упоминаний в отзывах</th></tr></thead><tbody>
+   ${list.map(a=>`<tr><td><span class="who"><span class="av">${ini(a.n)}</span><b>${a.n}</b></span></td><td class="muted">${a.o}</td><td>${bdg('+'+a.nps,a.nps>=60?'success':a.nps>=45?'primary':'warning')}</td><td class="num">${a.ans}</td><td class="num">${a.avg}</td><td>${bdg(a.offer+'% клиентов',a.offer>=90?'success':a.offer>=75?'warning':'danger')}</td><td class="num">${a.ment}</td></tr>`).join('')}
+  </tbody></table></div></div>
+  <div class="call c-primary">${ic('info')}<span>«Предлагает опрос» — доля встреч, после которых брокер предложил клиенту отсканировать QR или отметил отправку SMS. Чем выше, тем больше клиентов слышит компания.</span></div>`,'Как клиенты оценивают каждого брокера и насколько брокеры вовлекают клиентов в опросы.');
+};
+
+/* ---------- QR ---------- */
+function qrCode(){const q=S.qr;const ag=q.agent==='Все брокеры'?'all':q.agent.split(' ')[1].slice(0,3);return `spektra.app/q/${q.stage}-${ag}-${PLACES.indexOf(q.place)+1}`.toLowerCase()}
+function drawQR(seed){
+  const c=document.getElementById('qrc');if(!c)return;const x=c.getContext('2d'),N=25,s=180/N,o=10;
+  let h=0;for(const ch of seed)h=(h*31+ch.charCodeAt(0))>>>0;h=h||1;
+  const rnd=()=>{h^=h<<13;h^=h>>>17;h^=h<<5;return (h>>>0)/4294967296};
+  x.fillStyle='#fff';x.fillRect(0,0,200,200);x.fillStyle='#020618';
+  const inF=(i,j)=>(i<8&&j<8)||(i>=N-8&&j<8)||(i<8&&j>=N-8);
+  for(let i=0;i<N;i++)for(let j=0;j<N;j++){if(!inF(i,j)&&rnd()>.52)x.fillRect(o+i*s,o+j*s,s,s)}
+  const f=(cx,cy)=>{x.fillStyle='#020618';x.fillRect(o+cx*s,o+cy*s,7*s,7*s);x.fillStyle='#fff';x.fillRect(o+(cx+1)*s,o+(cy+1)*s,5*s,5*s);x.fillStyle='#155dfc';x.fillRect(o+(cx+2)*s,o+(cy+2)*s,3*s,3*s)};
+  f(0,0);f(N-7,0);f(0,N-7);
+}
+
+/* ---------- slide-overs ---------- */
+function soHTML(h,p,body,foot,wide){return `<div class="mo-bg" data-act="close"></div><div class="so${wide?' wide':''}" role="dialog" aria-modal="true" aria-label="${esc(h)}"><div class="so-h"><div><h2>${h}</h2>${p?`<p>${p}</p>`:''}</div><button class="ib" data-act="close" aria-label="Закрыть">${ic('x','lg')}</button></div><div class="so-c">${body}</div>${foot?`<div class="so-f">${foot}</div>`:''}</div>`}
+function renderModal(){
+  const m=S.modal,el=$('#mo');if(!m){el.innerHTML='';return}
+  if(m.t==='answer'){
+    const a=ANSWERS.find(x=>x.id===m.id),t=a.tk&&S.tickets.find(x=>x.id===a.tk);
+    const tl=[['primary','Отправлено приглашение',a.ch.includes('день')?'Каскад напоминаний, '+a.ch.toLowerCase():'Клиент открыл опрос сам: '+a.ch.toLowerCase()],[scColor(a.sc),`Ответ получен · оценка ${a.sc}`,a.d]];
+    if(a.sc>=9) tl.push(['success','Передан в активатор отзывов',a.next||'Приглашён оставить отзыв']);
+    if(t) tl.push([t.st==='done'?'success':'danger',`Обращение #${t.id}`,`${t.own} · ${{new:'новое',work:'в работе',done:'решено'}[t.st]}`]);
+    el.innerHTML=soHTML(a.c,a.obj,`<div class="big">${bdg(a.sc,scColor(a.sc))}<div><b style="font-weight:600">${{success:'Промоутер',warning:'Нейтральный',danger:'Критик'}[scColor(a.sc)]}</b><div class="muted">Вероятность рекомендовать компанию</div></div></div>
+     <blockquote class="quote">${a.cm}</blockquote>
+     <dl class="dl"><div><dt>Этап</dt><dd>${stageT(a.s)}</dd></div><div><dt>Брокер</dt><dd>${a.a}</dd></div><div><dt>Канал</dt><dd>${a.ch}</dd></div><div><dt>Дата</dt><dd>${a.d}</dd></div></dl>
+     <div><div style="font-weight:500;margin-bottom:12px">История</div><ul class="tl">${tl.map(([c,b,s])=>`<li><i class="c-${c}"></i><div><b>${b}</b><span>${s}</span></div></li>`).join('')}</ul></div>`,
+     (t?btn('Открыть обращения',{c:'primary',a:'data-go="tickets"'}):'')+btn('Закрыть',{a:'data-act="close"'}));
+  }else if(m.t==='notifs'){
+    const late=S.tickets.filter(t=>t.st==='new');
+    el.innerHTML=soHTML('Уведомления','',`<div class="ls" style="margin:0 -24px">${late.map(t=>`<div style="align-items:flex-start"><span class="ico c-danger">${ic('warn')}</span><div class="tx"><b>Новое обращение #${t.id}</b><span>${t.c}, оценка ${t.sc}: ${t.r.toLowerCase()}</span><a class="lnk" href="#tickets" data-act="close" style="margin-top:6px">Открыть</a></div></div>`).join('')}
+      <div style="align-items:flex-start"><span class="ico c-warning">${ic('star')}</span><div class="tx"><b>Отзыв 2 ★ в 2ГИС</b><span>Константин: «Показ перенесли дважды…»</span><a class="lnk" href="#reviews" data-act="close" style="margin-top:6px">Ответить</a></div></div>
+      <div style="align-items:flex-start"><span class="ico c-success">${ic('star')}</span><div class="tx"><b>Новый отзыв 5 ★ из активатора</b><span>Ирина М. на Яндекс Картах</span></div></div></div>`,btn('Отметить всё прочитанным',{a:'data-act="read-all"'}));
+  }else if(m.t==='preview'){
+    el.innerHTML=soHTML('Предпросмотр опроса','Так опрос видит клиент после сделки. Пройдите его с разными оценками, чтобы проверить сценарии.',`<div class="phone"><div class="ph-bar"><span>9:41</span><span>spektra.app</span></div><div class="ph-scr" id="ph">${phone()}</div></div>${pvNote()}`,btn('Начать заново',{i:'updown',a:'data-act="pv-reset"'})+btn('Закрыть',{a:'data-act="close"'}),true);
+  }
+}
+function phone(){
+  const p=S.pv,thr=S.act.thr==='Только 10'?10:9;
+  const brand=`<div class="ph-brand"><span class="tav">ЭЛ</span>Эстейт Лига · опрос клиентов</div>`;
+  if(p.step==='sms') return `<div class="muted" style="font-size:11px;text-align:center">Сообщения · сегодня</div><div class="sms">${S.mailText.replace('{имя}','Ольга').replace('{брокер}','Мария Ковалёва').replace('{этап}','сделку').replace('{объект}','пентхаус в Хамовниках').replace('{ссылка}','<a data-act="pv-open">spektra.app/s/7Kq2</a>')}</div><div class="muted" style="font-size:11px;text-align:center">Нажмите на ссылку</div>`;
+  if(p.step==='q'){
+    const chips=p.sc==null?[]:p.sc>=7?['Брокер на связи','Юридическая проверка','Точный подбор','Сделка без стресса']:['Брокер не на связи','Сроки регистрации','Переносы показов','Вопросы по документам'];
+    return `${brand}<div class="ph-card"><div class="who"><span class="av" style="width:40px;height:40px;background:#155dfc">МК</span><div><b style="font-weight:600">Мария Ковалёва</b><div class="muted" style="font-size:12px">ваш брокер · сделка по пентхаусу в Хамовниках</div></div></div></div>
+     <div class="ph-card" style="display:flex;flex-direction:column;gap:12px"><div class="ph-q">Насколько вероятно, что вы порекомендуете «Эстейт Лигу» друзьям?</div><div class="nps">${Array.from({length:11},(_,i)=>`<button data-act="pv-sc" data-v="${i}" class="${p.sc===i?'on':''}" aria-pressed="${p.sc===i}">${i}</button>`).join('')}</div><div class="nps-l"><span>Точно нет</span><span>Точно да</span></div>
+     ${p.sc!=null?`<div class="ph-q" style="font-size:14px">${p.sc>=7?'Что понравилось больше всего?':'Что пошло не так?'}</div><div class="chips">${chips.map(c=>`<button class="chip${p.chips.includes(c)?' on':''}" data-act="pv-chip" data-v="${c}">${c}</button>`).join('')}</div><textarea class="inp" style="min-height:70px" placeholder="Комментарий (необязательно)" aria-label="Комментарий"></textarea>`:''}
+     <button class="btn primary" data-act="pv-send"${p.sc==null?' disabled':''}>Отправить</button></div>
+     ${S.pers.social?`<div class="muted" style="font-size:11px;text-align:center">В этом месяце ответили 214 клиентов</div>`:''}`;
+  }
+  const mats=`<div class="ph-card"><b style="font-weight:600;font-size:13px">Вам пригодится</b>${MATS.filter((m,k)=>S.mats[k]&&(m[2]==='deal'||m[2]==='after')).slice(0,3).map(m=>`<div class="mat"><span class="ico c-primary">${ic(m[0])}</span>${m[1]}</div>`).join('')}</div><div class="ph-card" style="font-size:12px;color:#62748e">${ic('gift','sm')} Вы участвуете в квартальном розыгрыше: дизайн-проект кухни, сертификат в салон мебели и другие призы. Итоги 31 декабря.</div>`;
+  if(p.sc>=thr&&S.act.on){const pl=PLATS.filter((x,i)=>S.act.plats[i]);return `${brand}<div class="ph-card ph-done"><span class="ico c-success">${ic('check','lg')}</span><b style="font-weight:600;font-size:15px">Спасибо, Ольга!</b><span class="muted" style="font-size:13px">Мария будет рада вашему отзыву. Он поможет другим выбрать брокера</span></div>${pl.map(x=>`<button class="pf" data-act="pv-plat" data-v="${x[0]}"><span>${x[0]}<br><small>${String(x[1]).replace('.',',')} ★ · ${x[2]} отзывов</small></span>${ic('right')}</button>`).join('')}${mats}`}
+  if(p.sc<=6) return `${brand}<div class="ph-card ph-done"><span class="ico c-primary">${ic('chat','lg')}</span><b style="font-weight:600;font-size:15px">Спасибо за честность</b><span class="muted" style="font-size:13px">Олег Пахомов, директор по клиентскому сервису, свяжется с вами сегодня и поможет разобраться</span></div>${mats}`;
+  return `${brand}<div class="ph-card ph-done"><span class="ico c-success">${ic('check','lg')}</span><b style="font-weight:600;font-size:15px">Спасибо за ответ!</b><span class="muted" style="font-size:13px">Мы учтём ваши замечания, чтобы следующая сделка прошла ещё лучше</span></div>${mats}`;
+}
+function pvNote(){
+  const p=S.pv,thr=S.act.thr==='Только 10'?10:9;
+  if(p.step!=='done') return `<div class="call c-gray">${ic('info')}<span>Оценка ${thr===10?'10':'9–10'} — клиент увидит кнопки площадок. Оценка 0–6 — в кабинете появится обращение.</span></div>`;
+  if(p.sc>=thr&&S.act.on) return `<div class="call c-success">${ic('check')}<span><b>Что видит компания:</b> ответ в разделе «Ответы клиентов» со статусом «Приглашён оставить отзыв». Когда отзыв появится на площадке, Спектра подготовит черновик ответа.</span></div>`;
+  if(p.sc<=6) return `<div class="call c-danger">${ic('warn')}<span><b>Что видит компания:</b> обращение #1049 в разделе «Обращения»${S.act.tg?' и сообщение в Telegram':''}. Срок реакции — ${S.act.sla}.</span></div>`;
+  return `<div class="call c-gray">${ic('info')}<span><b>Что видит компания:</b> нейтральный ответ с комментарием — без обращения и без приглашения на площадки.</span></div>`;
+}
+
+/* ---------- render ---------- */
+function render(keep){
+  const id=(location.hash||'#dashboard').slice(1);cur=ROUTES.some(r=>r.id===id)?id:'dashboard';
+  const y=window.scrollY;
+  $('#nav').innerHTML=navHTML();$('#main').innerHTML=V[cur]();
+  const nb=S.tickets.filter(t=>t.st==='new').length;$('#bell').innerHTML=nb?bdg(nb,'danger',null,true):'';
+  renderModal();
+  if(cur==='qr')drawQR(qrCode());
+  if(keep)window.scrollTo(0,y);
+}
+const rerender=()=>render(true);
+function notify(t,b='',c='success'){const el=document.createElement('div');el.className='nt';el.innerHTML=`${ic(c==='success'?'check':c==='danger'?'warn':'info','lg tc c-'+c)}<div><b>${esc(t)}</b>${b?`<span>${esc(b)}</span>`:''}</div><button class="x" aria-label="Закрыть уведомление">${ic('x')}</button>`;el.querySelector('.x').onclick=()=>el.remove();$('#nt').prepend(el);setTimeout(()=>el.remove(),4500)}
+function setTheme(t){try{t==='system'?localStorage.removeItem('spk-theme'):localStorage.setItem('spk-theme',t)}catch(e){}if(t==='system')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=t;drawMenu()}
+function drawMenu(){const t=document.documentElement.dataset.theme||'system';$('#dd').innerHTML=`<div><div class="dd-u"><span class="av">ОП</span><div><b>Олег Пахомов</b><small>Директор по клиентскому сервису</small></div></div></div><div class="dd-th" role="group" aria-label="Тема">${[['light','sun','Светлая'],['dark','moon','Тёмная'],['system','pc','Как в системе']].map(([k,i,l])=>`<button class="${t===k?'on':''}" data-act="theme" data-v="${k}" aria-label="${l}" title="${l}">${ic(i)}</button>`).join('')}</div><div><button class="dd-i" data-act="note" data-v="Профиль и уведомления (в прототипе)">${ic('cog')}Настройки профиля</button><button class="dd-i" data-act="note" data-v="Выход (в прототипе)">${ic('logout')}Выйти</button></div>`}
+try{const t=localStorage.getItem('spk-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}
+
+/* ---------- events ---------- */
+const ACT={
+ 'sb-open':()=>$('#lay').classList.add('sb-open'),
+ 'sb-close':()=>$('#lay').classList.remove('sb-open'),
+ grp:v=>{S.closed[v]=!S.closed[v];$('#nav').innerHTML=navHTML()},
+ tenant:()=>notify('Эстейт Лига','Других компаний в этом аккаунте нет','primary'),
+ menu:()=>{S.menu=!S.menu;drawMenu();$('#dd').hidden=!S.menu},
+ theme:v=>setTheme(v),
+ note:v=>notify(v),
+ notifs:()=>{S.modal={t:'notifs'};renderModal()},
+ 'read-all':()=>{S.modal=null;renderModal();notify('Уведомления прочитаны')},
+ close:()=>{S.modal=null;renderModal()},
+ preview:()=>{S.pv={step:'sms',sc:null,chips:[]};S.modal={t:'preview'};renderModal()},
+ 'pv-reset':()=>{S.pv={step:'sms',sc:null,chips:[]};renderModal()},
+ 'pv-open':()=>{S.pv.step='q';renderModal()},
+ 'pv-sc':v=>{S.pv.sc=+v;S.pv.chips=[];renderModal()},
+ 'pv-chip':v=>{const c=S.pv.chips;c.includes(v)?c.splice(c.indexOf(v),1):c.push(v);renderModal()},
+ 'pv-send':()=>{S.pv.step='done';if(S.pv.sc<=6&&!S.tickets.some(t=>t.id===1049)){S.tickets.unshift({id:1049,c:'Ольга Ветрова',sc:S.pv.sc,r:S.pv.chips[0]||'Комментарий в опросе после сделки',a:'Мария Ковалёва',own:S.act.own.split(' — ')[0],due:'Сегодня, через '+S.act.sla,st:'new'});notify('Создано обращение #1049','Ольга Ветрова, оценка '+S.pv.sc,'danger')}rerender()},
+ 'pv-plat':v=>notify('Клиент открыл '+v,'Спектра отследит публикацию отзыва','primary'),
+ answer:v=>{S.modal={t:'answer',id:+v};renderModal()},
+ 'ans-tab':v=>{S.ansTab=v;rerender()},
+ 'tk-tab':v=>{S.tkTab=v;rerender()},
+ 'rv-tab':v=>{S.rvTab=v;rerender()},
+ 'br-tab':v=>{S.brTab=v;rerender()},
+ stage:v=>{S.stage=v;rerender()},
+ 'tk-take':v=>{const t=S.tickets.find(x=>x.id===+v);t.st='work';t.late=false;notify(`Обращение #${v} в работе`,'Ответственный: '+t.own);rerender()},
+ 'tk-close':v=>{const t=S.tickets.find(x=>x.id===+v);t.st='done';t.due='Решено сегодня';notify(`Обращение #${v} решено`,'Клиент получит короткий опрос о том, как решили вопрос');rerender()},
+ casc:v=>{const c=S.casc[S.stage];c[v]=c[v]?0:1;rerender()},
+ night:()=>{S.night=!S.night;rerender()},
+ 'reset-mail':()=>{S.mailText='{имя}, это {брокер} из «Эстейт Лиги». Спасибо, что доверили нам {этап}! Оцените, пожалуйста, как всё прошло — 2 минуты: {ссылка}';rerender();notify('Изменения отменены','','primary')},
+ pers:v=>{S.pers[v]=S.pers[v]?0:1;rerender()},
+ mat:v=>{S.mats[v]=S.mats[v]?0:1;rerender()},
+ 'rv-pub':v=>{const r=S.reviews.find(x=>x.id===+v);r.ans=$('#rv-'+v).value;r.st='answered';notify('Ответ опубликован',r.src);rerender()},
+ 'rv-tpl':v=>{$('#rv-'+v).value=TPL},
+ 'rv-appeal':v=>{S.reviews.find(x=>x.id===+v).st='appeal';notify('Жалоба отправлена на площадку','Обычно рассматривают 3–5 рабочих дней','primary');rerender()},
+ 'act-on':()=>{S.act.on=!S.act.on;rerender()},
+ 'act-tg':()=>{S.act.tg=!S.act.tg;rerender()},
+ 'act-plat':v=>{S.act.plats[v]=!S.act.plats[v];rerender()},
+ copy:()=>{try{navigator.clipboard.writeText('https://'+qrCode())}catch(e){}notify('Ссылка скопирована',qrCode())},
+};
+document.addEventListener('click',e=>{
+  const go=e.target.closest('[data-go]');if(go){S.modal=null;location.hash=go.dataset.go;return}
+  const t=e.target.closest('[data-act]');
+  if(!t){if(S.menu&&!e.target.closest('.um')){S.menu=false;$('#dd').hidden=true}return}
+  const a=t.dataset.act;if(a!=='menu'&&a!=='theme'&&S.menu){S.menu=false;$('#dd').hidden=true}
+  if(t.tagName==='A'&&a==='close'){S.modal=null;renderModal();return}
+  if(ACT[a]){if(t.type==='checkbox'){ACT[a](t.dataset.v);return}e.preventDefault();ACT[a](t.dataset.v)}
+});
+document.addEventListener('input',e=>{
+  const k=e.target.dataset.in;
+  if(k==='ans-q'){S.ansQ=e.target.value;const q=S.ansQ.toLowerCase();document.querySelectorAll('#ans-body tr').forEach(r=>r.hidden=!!q&&!r.dataset.q.includes(q))}
+  if(k==='mail-text'){S.mailText=e.target.value;const pv=$('#m-pv');if(pv)pv.textContent=S.mailText.replace('{имя}','Ольга').replace('{брокер}','Мария Ковалёва').replace('{этап}','сделку').replace('{ссылка}','spektra.app/s/7Kq2').replace('{объект}','пентхаус в Хамовниках')}
+});
+document.addEventListener('change',e=>{
+  const d=e.target.dataset;
+  if(d.ch==='qr'){S.qr[d.k]=e.target.value;rerender()}
+  if(d.ch==='act'){S.act[d.k]=e.target.value;rerender()}
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(S.modal){S.modal=null;renderModal()}if(S.menu){S.menu=false;$('#dd').hidden=true}$('#lay').classList.remove('sb-open')}
+  if(e.key==='Enter'&&e.target.id==='gs'){S.ansQ=e.target.value.trim();S.ansTab='all';e.target.value='';if(location.hash==='#answers')rerender();else location.hash='answers'}
+});
+window.addEventListener('hashchange',()=>{$('#lay').classList.remove('sb-open');S.modal=null;render();window.scrollTo(0,0)});
+render();
+</script>
+
+</body></html>
